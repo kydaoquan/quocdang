@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard Cực Cháy</title>
+    <style>
+        body { margin: 0; background: #000; color: #fff; font-family: 'Segoe UI', sans-serif; overflow-x: hidden; }
+        
+        /* Hiệu ứng nền - Canvas */
+        #bgCanvas { position: fixed; top: 0; left: 0; z-index: -1; }
+
+        .container { padding: 50px; display: flex; flex-wrap: wrap; gap: 30px; justify-content: center; }
+
+        .card {
+            width: 280px; padding: 30px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            transition: 0.5s;
+            text-align: center;
+        }
+
+        .card:hover {
+            transform: scale(1.1) rotate(2deg);
+            box-shadow: 0 0 30px #ff00ff;
+            border-color: #ff00ff;
+        }
+
+        h2 { color: #ff00ff; text-shadow: 0 0 10px #ff00ff; }
+
+        a {
+            display: block; margin: 15px 0; color: #fff;
+            text-decoration: none; font-weight: bold;
+            text-transform: uppercase; letter-spacing: 2px;
+            transition: 0.3s;
+        }
+
+        a:hover { color: #00ffff; text-shadow: 0 0 10px #00ffff; }
+    </style>
+</head>
+<body>
+
+    <canvas id="bgCanvas"></canvas>
+
+    <div class="container">
+        <div class="card">
+            <h2>STREAMING</h2>
+            <a href="#">OBS Remote</a>
+            <a href="#">VDO Ninja</a>
+        </div>
+        <div class="card">
+            <h2>DEVELOPMENT</h2>
+            <a href="#">GitHub</a>
+            <a href="#">Localhost</a>
+        </div>
+        <div class="card">
+            <h2>GIẢI TRÍ</h2>
+            <a href="#">T1 Official</a>
+            <a href="#">YouTube</a>
+        </div>
+    </div>
+
+    <script>
+        // Hiệu ứng hạt sến súa bay bay
+        const canvas = document.getElementById('bgCanvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+        let particles = [];
+        
+        function createParticle() {
+            return { x: Math.random()*canvas.width, y: Math.random()*canvas.height, r: Math.random()*3, dx: Math.random()-0.5, dy: Math.random()-0.5 };
+        }
+        for(let i=0; i<100; i++) particles.push(createParticle());
+
+        function draw() {
+            ctx.clearRect(0,0, canvas.width, canvas.height);
+            particles.forEach(p => {
+                ctx.fillStyle = "#ff00ff";
+                ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI*2); ctx.fill();
+                p.x += p.dx; p.y += p.dy;
+                if(p.x < 0 || p.x > canvas.width) p.dx *= -1;
+                if(p.y < 0 || p.y > canvas.height) p.dy *= -1;
+            });
+            requestAnimationFrame(draw);
+        }
+        draw();
+    </script>
+</body>
+</html>

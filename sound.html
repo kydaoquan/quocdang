@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Micro Kỳ Đạo Quán System</title>
+
+<style>
+    body{
+        margin:0;
+        background:#111;
+        color:white;
+        font-family:Arial;
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        height:100vh;
+        flex-direction:column;
+        gap:15px;
+    }
+
+    select, button{
+        padding:12px;
+        border-radius:10px;
+        border:none;
+        font-size:16px;
+        min-width:320px;
+    }
+
+    button{
+        background:#00aa66;
+        color:white;
+        cursor:pointer;
+    }
+
+    iframe{
+        width:1px;
+        height:1px;
+        opacity:0;
+        border:0;
+        position:absolute;
+    }
+
+    #status{
+        opacity:.8;
+        font-size:14px;
+    }
+</style>
+</head>
+<body>
+
+<h2>Vui lòng chọn Microphone</h2>
+
+<select id="micSelect"></select>
+
+<button id="startBtn">
+    Kêt Nối
+</button>
+
+<div id="status"></div>
+
+<script>
+
+const micSelect = document.getElementById("micSelect");
+const statusEl = document.getElementById("status");
+
+async function loadMics(){
+
+    // xin permission trước
+    await navigator.mediaDevices.getUserMedia({ audio:true });
+
+    const devices =
+        await navigator.mediaDevices.enumerateDevices();
+
+    const mics =
+        devices.filter(d => d.kind === "audioinput");
+
+    micSelect.innerHTML = "";
+
+    mics.forEach((mic,index)=>{
+
+        const option = document.createElement("option");
+
+        option.value = mic.deviceId;
+
+        option.text =
+            mic.label || `Microphone ${index+1}`;
+
+        micSelect.appendChild(option);
+    });
+}
+
+loadMics();
+
+document
+.getElementById("startBtn")
+.onclick = ()=>{
+
+    const deviceId = micSelect.value;
+
+    const iframe = document.createElement("iframe");
+
+    iframe.allow =
+        "camera; microphone; autoplay";
+
+    iframe.src =
+        "https://vdo.ninja/?" +
+        "push=mysound" +
+        "&miconly" +
+        "&proaudio" +
+        "&stereo" +
+        "&bitrate=320" +
+        "&buffer=0" +
+        "&autostart" +
+        "&cleanoutput" +
+        "&transparent" +
+        "&audiodevice=" +
+        encodeURIComponent(deviceId);
+
+    document.body.appendChild(iframe);
+
+    statusEl.innerText =
+        "Đã kết nối với Microphone";
+};
+
+</script>
+
+</body>
+</html>
